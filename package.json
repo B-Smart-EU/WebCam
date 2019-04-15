@@ -1,0 +1,27 @@
+{
+  "name": "webcam",
+  "version": "1.0.0",
+  "description": "Tets video streaming y recoding",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Juanklg/WebCam.git"
+  },
+  "keywords": [
+    "Video",
+    "streamig",
+    "recording"
+  ],
+  "author": "Juan Linares",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Juanklg/WebCam/issues"
+  },
+  "homepage": "https://github.com/Juanklg/WebCam#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
