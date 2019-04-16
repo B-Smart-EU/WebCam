@@ -1,16 +1,21 @@
-
-/*require('isomorphic-fetch'); // or another library of choice.
-var Dropbox = require('dropbox').Dropbox;
-var dbx = new Dropbox({ accessToken: 'Reo36udbf2AAAAAAAAAADIG1GIeCbVN2fYfi77swNpixjwpz3ceEXB2q4L_56kfb' });*/
-
 const express = require('express');
 const app = express();
+const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
+const fs = require('fs')
 
 //const nodemailer = require('nodemailer');
 
 //const cors = require('cors')
 const path = require('path');
+
+const dfs = require('dropbox-fs')({
+    apiKey: 'Reo36udbf2AAAAAAAAAADIG1GIeCbVN2fYfi77swNpixjwpz3ceEXB2q4L_56kfb'
+});
+ 
+dfs.readdir('', (err, result) => {
+    console.log(result);
+});
 
 /*
 //-------------Servidor socket------------------
@@ -23,6 +28,10 @@ server.listen(3001, () => {
 });
 //---------------------------------------------
 */
+
+// default options
+app.use(fileUpload());
+
 app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(cors());
 
@@ -32,12 +41,64 @@ app.listen(81, () => {
 
 app.use(express.static(path.join(__dirname, '/public')));
 
+app.post('/upload', function(req, res) {
+	if (Object.keys(req.files).length == 0) {
+	  return res.status(400).send('No files were uploaded.');
+	}
+  
+	// The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+	let sampleFile = req.files.sampleFile;
+	let ruta = './videos/'+sampleFile.name;
+
+	sampleFile.mv(ruta, function(err) {
+		if (err){
+			return res.status(500).send(err);
+		}
+		else{
+			dfs.writeFile('/videos/kart.mp4', fs.readFileSync(ruta), {}, (err, stat) => {
+				if(err){
+					console.log('Paila la mocha')
+					console.log(err)
+				}else{			
+					console.log(stat.name);
+				}	
+			});			
+		}
+		  
+
+
+	
+		res.send('File uploaded!');
+		
+	});
+	//console.log(sampleFile)
+  
+	// Use the mv() method to place the file somewhere on your server
+	/*sampleFile.mv('//filename.jpg', function(err) {
+	  if (err)
+		return res.status(500).send(err);
+  
+	  res.send('File uploaded!');
+	});*/
+  });
+
 app.get("/", (req, res) => {
 	res.setHeader('Content-Type', 'text/html');
 	res.status(200)
-	res.sendFile(path.join(__dirname, '/public', '/index.html'));
+	res.sendFile(path.join(__dirname, '/public', '/index2.html'));
 });
 
+app.get("/con", (req, res) => {
+	res.setHeader('Content-Type', 'text/html');
+	res.status(200)
+	res.sendFile(path.join(__dirname, '/public', '/main.html'));
+});
+
+app.get("/full", (req, res) => {
+	res.setHeader('Content-Type', 'text/html');
+	res.status(200)
+	res.sendFile(path.join(__dirname, '/public', '/2in1.html'));
+});
 
 
 
